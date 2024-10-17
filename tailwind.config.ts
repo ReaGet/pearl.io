@@ -61,11 +61,6 @@ const config: Config = {
   },
   plugins: [
 		require("tailwindcss-animate"),
-		plugin(({ addBase }) => {
-			// addBase({
-			// 	'html': { fontSize: '10px' },
-			// })
-		})
 	],
 };
 export default config;
