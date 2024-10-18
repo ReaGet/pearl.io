@@ -8,13 +8,13 @@ export async function GET() {
   try {
     const page = await browser.newPage();
     await page.goto("https://avtoalfa.com");
-    await page.screenshot({ path: `public/screenshots/${imageName}.png` });
+    await page.screenshot({ path: `public/${imageName}.png` });
   } catch (e) {
     console.log(e);
   } finally {
     await browser.close();
   }
   return NextResponse.json({
-    hello: `/screenshots/${imageName}.png`
+    hello: `/${imageName}.png`
   })
 }
