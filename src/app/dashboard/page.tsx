@@ -11,6 +11,17 @@ import ButtonAddSite from '@/components/button-add-site'
 import ButtonResetCache from '@/components/button-reset-cache'
 import { sites } from '@/lib/constants'
 import SiteItem from '@/components/site-item'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { usePathname } from 'next/navigation'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Pearl',
+    openGraph: {
+      images: 'http://localhost:3000/api/get',
+    },
+  }
+}
 
 const Dashboard = () => {
   return (
