@@ -1,7 +1,7 @@
-import Container from '@/components/container'
-import { ChevronsRight, User } from 'lucide-react'
-import Link from 'next/link'
 import React from 'react'
+import Container from '@/components/container'
+import { ChevronsRight, LogOut, User } from 'lucide-react'
+import Link from 'next/link'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +13,7 @@ import {
   DropdownMenuItem
 } from "@/components/ui/dropdown-menu"
 import { DASHBOARD } from '@/lib/constants'
+import { SignOutButton } from '@clerk/nextjs'
 
 const LayoutDashboard = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -44,7 +45,13 @@ const LayoutDashboard = ({ children }: { children: React.ReactNode }) => {
               <DropdownMenuLabel className='pb-0'>Hey, User</DropdownMenuLabel>
               <div className='px-2 text-sm text-primary'>rifat2125@gmail.com</div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem>
+                <SignOutButton redirectUrl='/sign-in'>
+                  <div className='flex items-center gap-2 w-full'>
+                    <LogOut /> Log out
+                  </div>
+                </SignOutButton>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </Container>
