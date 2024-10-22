@@ -23,32 +23,36 @@ model User {
 }
 
 model Project {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
-  favicon String
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  favicon       String
   cacheDuration String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   Link Link[]
 }
 
 model Link {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  link String
-  projectId String
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  link      String
+  projectId String @db.Uuid
 
   Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Image   Image?  @relation(references: [id], onDelete: Cascade, fields: [imageId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  imageId   String?  @db.Uuid
 }
 
-model Screenshot {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  link String
-  
+model Image {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  link   String
+  linkId String? @db.Uuid
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Link      Link[]
 }
