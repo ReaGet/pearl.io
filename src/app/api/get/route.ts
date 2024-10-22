@@ -1,33 +1,21 @@
-import puppeteer from 'puppeteer'
-import { v4 as uuid4 } from 'uuid'
- 
-const imgName = "test"
+import { screenshotViewport } from "@/lib/screenshot"
+import { NextRequest } from "next/server"
 
-export const GET = async () => {
-  const browser = await puppeteer.launch()
-  const imageName = imgName || uuid4()
-  try {
-    const page = await browser.newPage();
-    await page.goto("https://avtoalfa.com");
-    await page.screenshot({ path: `public/${imageName}.png` });
-  } catch (e) {
-    console.log(e);
-  } finally {
-    await browser.close();
+export const GET = async (request: NextRequest) => {
+  const url = new URL(request.url)
+  const queryUrl = url.searchParams.get('url')
+  const delay = parseInt(url.searchParams.get('delay') || '')
 
-    const res = await fetch("http://localhost:3000/${imageName}.png");
-  
-    const blob = await res.blob();
-  
-    const headers = new Headers();
-  
-    headers.set("Content-Type", "image/*");
-  }
-  return new Response(`/${imageName}.png`, {
+  if (!queryUrl) return new Response(null, {
+    status: 404,
+  })
+
+  const image = await screenshotViewport(queryUrl, delay)
+
+  return new Response(image, {
     status: 200,
     headers: {
       'Content-Type': 'image/jpeg'
     }
-    bo
   })
 }
