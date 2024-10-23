@@ -14,45 +14,49 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  fullname  String
-  clerkId   String   @unique
-  type      String
+  id        String   @id @default(uuid())
+  clerkId   String @unique
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  Project Project[]
 }
 
 model Project {
-  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
-  favicon       String
-  cacheDuration String
+  id            String @id @default(uuid())
+  name          String?
+  favicon       String?
+  cacheDuration String?
+
+  userClerkId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  User User? @relation(fields: [userClerkId], references: [clerkId], onDelete: Cascade)
   Link Link[]
 }
 
 model Link {
-  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        String @id @default(uuid())
   link      String
-  projectId String @db.Uuid
-
-  Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  Image   Image?  @relation(references: [id], onDelete: Cascade, fields: [imageId])
+  projectId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  imageId   String?  @db.Uuid
+  imageId   String? 
+
+  Project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Image   Image?
 }
 
 model Image {
-  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id     String @id @default(uuid())
   link   String
-  linkId String? @db.Uuid
+  linkId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Link      Link[]
+  Link      Link? @relation(fields: [linkId], references: [id])
 }

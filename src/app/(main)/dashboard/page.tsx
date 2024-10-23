@@ -11,8 +11,9 @@ import ButtonAddSite from '@/components/button-add-site'
 import ButtonResetCache from '@/components/button-reset-cache'
 import { sites } from '@/lib/constants'
 import SiteItem from '@/components/site-item'
-import type { Metadata, ResolvingMetadata } from 'next'
-import { usePathname } from 'next/navigation'
+import type { Metadata } from 'next'
+import { getProjects } from '@/actions/project'
+import { getAuthUserDetails } from '@/actions/user'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -23,7 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-const Dashboard = () => {
+const Dashboard = async () => {
+  const userDetails = await getAuthUserDetails()
+  const projects = await getProjects()
+  console.log(userDetails)
+  console.log('projects:', projects)
   return (
     <Container className='flex flex-col gap-8 mt-16'>
       <div className='w-full'>
