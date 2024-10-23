@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import Link from 'next/link'
-import ButtonAddSite from '@/components/button-add-site'
+import ButtonAddProject from '@/components/button-add-project'
 import ButtonResetCache from '@/components/button-reset-cache'
 import { sites } from '@/lib/constants'
 import SiteItem from '@/components/site-item'
@@ -32,7 +32,7 @@ const Dashboard = async () => {
   return (
     <Container className='flex flex-col gap-8 mt-16'>
       <div className='w-full'>
-        <ButtonAddSite />
+        <ButtonAddProject />
       </div>
       <div className='grid grid-cols-4 gap-8'>
         { sites.map(s => (

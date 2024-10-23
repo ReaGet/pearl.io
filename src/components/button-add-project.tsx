@@ -1,5 +1,6 @@
+'use client'
 import { Button } from '@/components/ui/button'
-import { CopyIcon, Grid2x2Plus } from 'lucide-react'
+import { Grid2x2Plus } from 'lucide-react'
 import {
   Dialog,
   DialogClose,
@@ -12,10 +13,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAddProject } from '@/hooks/project/use-project'
 
-const ButtonAddSite = () => {
+const ButtonAddProject = () => {
+  const { loading } = useAddProject()
+
   return (
-    <Dialog>
+    <Dialog open={true}>
       <DialogTrigger asChild>
         <Button variant='ghost' className='text-sm font-bold'>
           <Grid2x2Plus className='w-4 h-4' />
@@ -24,9 +28,9 @@ const ButtonAddSite = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share link</DialogTitle>
+          <DialogTitle>Create new project</DialogTitle>
           <DialogDescription>
-            Anyone who has this link will be able to view this.
+            Add link of target site
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
@@ -36,19 +40,18 @@ const ButtonAddSite = () => {
             </Label>
             <Input
               id="link"
-              defaultValue="https://ui.shadcn.com/docs/installation"
-              readOnly
+              placeholder='https://site.ru'
+              defaultValue='https://avtoalfa.com/'
             />
           </div>
-          <Button type="submit" size="sm" className="px-3">
-            <span className="sr-only">Copy</span>
-            <CopyIcon className="h-4 w-4" />
-          </Button>
         </div>
-        <DialogFooter className="sm:justify-start">
+        <DialogFooter className="flex-row justify-end">
+          <Button type="button" disabled={loading}>
+            Create
+          </Button>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
+            <Button type="button" variant="ghost" asChild className='cursor-pointer'>
+              <div>Close</div>
             </Button>
           </DialogClose>
         </DialogFooter>
@@ -57,4 +60,4 @@ const ButtonAddSite = () => {
   )
 }
 
-export default ButtonAddSite
+export default ButtonAddProject
