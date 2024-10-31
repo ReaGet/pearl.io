@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Pearl',
     openGraph: {
-      images: 'http://localhost:3000/api/get',
+      images: 'http://localhost:3000/api/get?url=https://avtoalfa.com',
     },
   }
 }
@@ -41,7 +41,7 @@ const Dashboard = async () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className='px-4 pb-4 text-sm'>
-                {/* <strong>{s?.cached || 0}</strong> cached images */}
+                <strong>{0}</strong> cached images
               </CardContent>
             </Card>
           </Link>

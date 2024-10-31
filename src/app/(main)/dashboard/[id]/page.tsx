@@ -23,6 +23,7 @@ import Link from 'next/link'
 import SiteItem from '@/components/site-item'
 import ButtonResetCache from '@/components/button-reset-cache'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { getProjects } from '@/actions/project'
 
 type Props = {
   params: {
@@ -30,10 +31,11 @@ type Props = {
   }
 }
 
-const SitePage = ({ params }: Props) => {
-  const currentSite = sites.find(s => s.id === params.id)
+const ProjectPage = async ({ params }: Props) => {
+  const projects = await getProjects() || []
+  const currentProject = projects.find(s => s.id === params.id)
 
-  if (!currentSite) return redirect(DASHBOARD)
+  if (!currentProject) return redirect(DASHBOARD)
   
   return (
     <Container className='flex flex-col gap-8 mt-8'>
@@ -49,18 +51,18 @@ const SitePage = ({ params }: Props) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='rounded-sm'>
-              <SiteItem {...currentSite} />
+              <SiteItem img={currentProject.favicon ? `${currentProject.url}${currentProject.favicon}` : ''} name={currentProject.name} />
               <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-56' align='start'>
-            {sites.map(s => (
-              s.id === currentSite.id
+            {projects.map(s => (
+              s.id === currentProject?.id
               ? null
               : (
                 <Link href={`${DASHBOARD}/${s.id}`} key={s.id}>
                   <DropdownMenuItem key={s.id} className='cursor-pointer'>
-                    <SiteItem {...s} />
+                    <SiteItem img={s.favicon ? `${s.url}${s.favicon}` : ''} name={s.name} />
                   </DropdownMenuItem>
                 </Link>
               )
@@ -94,15 +96,15 @@ const SitePage = ({ params }: Props) => {
         </div>
       </div>
       <Alert>
-        { currentSite.cachedRoutes?.length
+        { projects?.cachedRoutes?.length
           ? (
-            currentSite.cachedRoutes.map(r => (
+            projects.cachedRoutes.map(r => (
               <div className='flex gap-4 p-2 text-muted-foreground rounded-md text-left hover:bg-muted' key={r.id}>
                 <span className='max-w-[220px] line-clamp-1 text-black'>{r.title}</span>
                 <span>|</span>
                 <span>{r.route}</span>
                 <div className='ml-auto'>
-                  <img src={currentSite.img} />
+                  <img src={projects.img} />
                 </div>
               </div>
             ))
@@ -116,4 +118,4 @@ const SitePage = ({ params }: Props) => {
   )
 }
 
-export default SitePage
+export default ProjectPage
