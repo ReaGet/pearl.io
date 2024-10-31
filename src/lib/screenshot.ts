@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer'
+import puppeteer, { Page } from 'puppeteer'
 import { v4 as uuid4 } from 'uuid'
 
 const delayFn = (ms: number) => new Promise<void>((resolve) => {
@@ -6,9 +6,25 @@ const delayFn = (ms: number) => new Promise<void>((resolve) => {
 })
 
 
-export const screenshotViewport = async (url: string, delay: number = 0): Promise<Blob> => {
-  const browser = await puppeteer.launch()
+export const screenshotViewport = async (url: string, delay: number = 0): Promise<Blob | null> => {
   const imageName = uuid4()
+  try {
+    await getPuppeteerPage(url, async (page) => {
+      await delayFn(delay)
+      await page.screenshot({ path: `public/${imageName}.jpg`, quality: 100 })   
+    })
+  } catch (e) {
+    console.log(e)
+  }
+
+  const res = await fetch(`http://localhost:3000/${imageName}.jpg`)
+  return await res.blob()
+}
+
+type GetPuppeteerPageParam = (page: Page) => Promise<any>
+
+export const getPuppeteerPage = async (url: string, callback: GetPuppeteerPageParam) => {
+  const browser = await puppeteer.launch()
   try {
     const page = await browser.newPage()
 
@@ -20,17 +36,10 @@ export const screenshotViewport = async (url: string, delay: number = 0): Promis
 
     await page.goto(url)
 
-    await delayFn(delay)
-
-    await page.screenshot({ path: `public/${imageName}.jpg`, quality: 100 })   
-
-  } catch (e) {
+    return await callback(page)
+  } catch(e) {
     console.log(e)
   } finally {
     await browser.close()
-
   }
-
-  const res = await fetch(`http://localhost:3000/${imageName}.jpg`)
-  return await res.blob()
 }

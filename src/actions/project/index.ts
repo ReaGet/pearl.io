@@ -1,5 +1,9 @@
+'use server'
 import { client } from "@/lib/prisma"
+import { getPuppeteerPage } from "@/lib/screenshot"
 import { currentUser } from "@clerk/nextjs/server"
+import { Project } from "@prisma/client"
+import { withHttps } from 'ufo'
 
 export const getProjects = async () => {
   try {
@@ -8,7 +12,7 @@ export const getProjects = async () => {
     
     const projects = await client.project.findMany({
       where: {
-        userClerkId: user.id
+        userId: user.id
       },
     })
     if (projects) {
@@ -23,13 +27,69 @@ export const createProject = async (url: string) => {
   try {
     const user = await currentUser()
     if (!user) return
+    
+    const { hostname, origin, pathname, href } = new URL(withHttps(url))
 
-    const project = client.project.create({
+    const project = await client.project.create({
       data: {
-        name: new URL(url).hostname
+        name: hostname,
+        url: `${origin}${pathname}`,
+        cacheDuration: '14',
+        favicon: '',
+        userId: user.id,
       }
     })
+
+    getFaviconAndUpdateInfo(project)
+
+    if (project) return project
   } catch (e) {
     console.log('[createProject]:', e)
+  }
+}
+
+export const updateProject = async (projectId: string, projectData: Partial<Project>) => {
+  try {
+    const user = await currentUser()
+    if (!user) return
+
+    const response = await client.project.update({
+      where: { id: projectId },
+      data: { ... projectData }
+    })
+    
+    return response
+  } catch(e) {
+    console.log('[updateProject]', e)
+  }
+}
+
+type WebsiteBasicInfo = {
+  favicon: string
+}
+
+const getFaviconAndUpdateInfo = (project: Project) => {
+  getWebsiteData(project.url).then(data => {
+    updateProject(project.id, data)
+  })
+}
+
+const getWebsiteData = async (url: string): Promise<WebsiteBasicInfo> => {
+  try {
+    return await getPuppeteerPage(url, async (page) => {
+      const faviconUrl = await page.evaluate(() => {
+        const faviconElement = document.querySelector('link[rel*="icon"]')
+        return faviconElement && faviconElement.getAttribute('href')
+      })
+      
+      return {
+        favicon: faviconUrl
+      }
+    })
+  } catch(e) {
+    console.log(e)
+    return {
+      favicon: ''
+    }
   }
 }

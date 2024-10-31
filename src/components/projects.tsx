@@ -1,4 +1,4 @@
-import Container from '@/components/container'
+'use client'
 import React from 'react'
 import {
   Card,
@@ -9,34 +9,27 @@ import {
 import Link from 'next/link'
 import ButtonAddProject from '@/components/button-add-project'
 import ButtonResetCache from '@/components/button-reset-cache'
+import { sites } from '@/lib/constants'
 import SiteItem from '@/components/site-item'
-import type { Metadata } from 'next'
 import { getProjects } from '@/actions/project'
+import { getAuthUserDetails } from '@/actions/user'
+import { useProjects } from '@/hooks/project/use-project'
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: 'Pearl',
-    openGraph: {
-      images: 'http://localhost:3000/api/get',
-    },
-  }
-}
-
-const Dashboard = async () => {
-  const projects = await getProjects() || []
-
+const Projects = () => {
+  const { projects } = useProjects()
+  console.log(projects)
   return (
-    <Container className='flex flex-col gap-8 mt-16'>
+    <>
       <div className='w-full'>
         <ButtonAddProject />
       </div>
-      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-8'>
+      <div className='grid grid-cols-4 gap-8'>
         { projects.map(s => (
           <Link href={`/dashboard/${s.id}`} key={s.id}>
             <Card className="hover:shadow-sm transition-shadow">
               <CardHeader className='px-4 pt-4 pb-3'>
                 <CardTitle className='flex items-center gap-3'>
-                  <SiteItem img={s.favicon ? `${s.url}${s.favicon}` : ''} name={s.name} imgSize={20} />
+                  <SiteItem img={`${s.url}${s.favicon}`} name={s.name} imgSize={20} />
                   <ButtonResetCache className='-mt-2 -mr-2' />
                 </CardTitle>
               </CardHeader>
@@ -47,8 +40,8 @@ const Dashboard = async () => {
           </Link>
         ))}
       </div>
-    </Container>
+    </>
   )
 }
 
-export default Dashboard
+export default Projects
