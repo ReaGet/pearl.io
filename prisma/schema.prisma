@@ -26,7 +26,7 @@ model User {
 model Project {
   id            String @id @default(uuid())
   name          String
-  url           String @unique
+  url           String
   favicon       String?
   cacheDuration String?
 
@@ -36,7 +36,19 @@ model Project {
   updatedAt DateTime @updatedAt
 
   User User @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
-  Link Link[]
+  Image Image[]
+}
+
+model Image {
+  id     String @id @default(uuid())
+  name   String
+  link String
+  projectId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Route {
@@ -53,16 +65,6 @@ model Link {
   updatedAt DateTime @updatedAt
   imageId   String? 
 
-  Project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  Image   Image?
-}
-
-model Image {
-  id     String @id @default(uuid())
-  link   String
-  linkId String? @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Link      Link? @relation(fields: [linkId], references: [id])
+  // Project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // Image   Image?
 }

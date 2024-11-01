@@ -15,8 +15,11 @@ import {
 import { DASHBOARD } from '@/lib/constants'
 import { SignOutButton } from '@clerk/nextjs'
 import { getAuthUserDetails } from '@/actions/user'
+import ProjectsActionProvider from '@/providers/projects-action-provider'
+import { currentUser } from '@clerk/nextjs/server'
 
 const LayoutDashboard = async ({ children }: { children: React.ReactNode }) => {
+  const user = await currentUser()
   await getAuthUserDetails()
 
   return (
@@ -29,8 +32,8 @@ const LayoutDashboard = async ({ children }: { children: React.ReactNode }) => {
               pink: fa9dd9
               red: fa9d9d
             */}
-            {/* <div className='p-1 bg-[#fa9d9d] rounded-lg'>
-              <ChevronsRight className='text-white' size='32' />
+            {/* <div className='p-1 bg-[#fa9dd9] rounded-lg'>
+              <ChevronsRight className='text-white' size='18' />
             </div> */}
             <div className='p-1 bg-black rounded-lg'>
               <ChevronsRight className='text-white' size='18' />
@@ -46,7 +49,7 @@ const LayoutDashboard = async ({ children }: { children: React.ReactNode }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-56'>
               <DropdownMenuLabel className='pb-0'>Hey, User</DropdownMenuLabel>
-              <div className='px-2 text-sm text-primary'>rifat2125@gmail.com</div>
+              <div className='px-2 text-sm text-primary'>{user?.emailAddresses[0].emailAddress}</div>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <SignOutButton redirectUrl='/sign-in'>
@@ -59,7 +62,11 @@ const LayoutDashboard = async ({ children }: { children: React.ReactNode }) => {
           </DropdownMenu>
         </Container>
       </header>
-      <main>{children}</main>
+      <main>  
+        <ProjectsActionProvider>
+          {children}
+        </ProjectsActionProvider>
+      </main>
     </>
   )
 }

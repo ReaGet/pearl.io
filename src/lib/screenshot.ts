@@ -5,8 +5,7 @@ const delayFn = (ms: number) => new Promise<void>((resolve) => {
   setTimeout(() => resolve(), ms)
 })
 
-
-export const screenshotViewport = async (url: string, delay: number = 0): Promise<Blob | null> => {
+export const screenshotViewport = async (url: string, delay: number = 0): Promise<string | null> => {
   const imageName = uuid4()
   try {
     await getPuppeteerPage(url, async (page) => {
@@ -17,8 +16,7 @@ export const screenshotViewport = async (url: string, delay: number = 0): Promis
     console.log(e)
   }
 
-  const res = await fetch(`http://localhost:3000/${imageName}.jpg`)
-  return await res.blob()
+  return imageName
 }
 
 type GetPuppeteerPageParam = (page: Page) => Promise<any>

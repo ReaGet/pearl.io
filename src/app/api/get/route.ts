@@ -1,18 +1,37 @@
-import { screenshotViewport } from "@/lib/screenshot"
-import { NextRequest } from "next/server"
+import { getOrCreateImage } from '@/actions/image'
+import { getProjectByURL } from '@/actions/project'
+import { NextRequest } from 'next/server'
 
 export const GET = async (request: NextRequest) => {
-  const url = new URL(request.url)
-  const queryUrl = url.searchParams.get('url')
-  const delay = parseInt(url.searchParams.get('delay') || '')
+  const $url = new URL(request.url)
+  const url = $url.searchParams.get('url') || ''
+  const delay = parseInt($url.searchParams.get('delay') || '')
 
-  if (!queryUrl) return new Response(null, {
+  if (!url) return new Response(null, {
     status: 404,
   })
+  
+  const project = await getProjectByURL(url)
 
-  const image = await screenshotViewport(queryUrl, delay)
+  if (!project) {
+    console.log('There is no project:', project)
+    return new Response(null, {
+      status: 404,
+    })
+  }
 
-  return new Response(image, {
+  const image = await getOrCreateImage(project, url, delay)
+
+  if (!image) {
+    console.log('There is no image:', image)
+    return new Response(null, {
+      status: 404,
+    })
+  }
+
+  const imageBlob = await fetch(`http://localhost:4000/${image.name}.jpg`).then(res => res.blob())
+
+  return new Response(imageBlob, {
     status: 200,
     headers: {
       'Content-Type': 'image/jpeg'

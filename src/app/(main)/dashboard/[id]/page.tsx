@@ -21,9 +21,9 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, ChevronDown, Slice } from 'lucide-react'
 import Link from 'next/link'
 import ProjectIdentity from '@/components/project-identity'
-import ButtonResetCache from '@/components/button-reset-cache'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getProjects } from '@/actions/project'
+import ProjectCardActions from '@/components/project-card-actions'
 
 type Props = {
   params: {
@@ -36,7 +36,7 @@ const ProjectPage = async ({ params }: Props) => {
   const currentProject = projects.find(s => s.id === params.id)
 
   if (!currentProject) return redirect(DASHBOARD)
-  
+    
   return (
     <Container className='flex flex-col gap-8 mt-8'>
       <div className='mb-6'>
@@ -92,19 +92,18 @@ const ProjectPage = async ({ params }: Props) => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <ButtonResetCache />
+
+          <ProjectCardActions projectId={currentProject.id} />
         </div>
       </div>
       <Alert>
-        { projects?.cachedRoutes?.length
+        { currentProject.Image.length
           ? (
-            projects.cachedRoutes.map(r => (
-              <div className='flex gap-4 p-2 text-muted-foreground rounded-md text-left hover:bg-muted' key={r.id}>
-                <span className='max-w-[220px] line-clamp-1 text-black'>{r.title}</span>
-                <span>|</span>
-                <span>{r.route}</span>
-                <div className='ml-auto'>
-                  <img src={projects.img} />
+            currentProject.Image.map(i => (
+              <div className='flex items-center gap-4 px-2 py-1 text-muted-foreground rounded-md text-left hover:bg-muted' key={i.id}>
+                <span className='max-w-[520px] line-clamp-1 text-black'>{i.link}</span>
+                <div className='h-8 w-16 ml-auto'>
+                  <img src={`/${i.name}.jpg`} className='h-full w-full object-contain' loading='lazy' />
                 </div>
               </div>
             ))

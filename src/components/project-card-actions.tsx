@@ -13,7 +13,7 @@ import { useProjectActionsContext } from '@/providers/projects-action-provider'
 
 type Props = {
   projectId: string
-  className: string
+  className?: string
 }
 
 const ProjectCardActions = ({ projectId, className }: Props) => {

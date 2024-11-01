@@ -3,7 +3,7 @@ import { client } from "@/lib/prisma"
 import { getPuppeteerPage } from "@/lib/screenshot"
 import { currentUser } from "@clerk/nextjs/server"
 import { Project } from "@prisma/client"
-import { withHttps } from 'ufo'
+import { withHttps, parseURL } from 'ufo'
 
 export const getProjects = async () => {
   try {
@@ -14,12 +14,32 @@ export const getProjects = async () => {
       where: {
         userId: user.id
       },
+      include: {
+        Image: true
+      }
     })
     if (projects) {
       return projects
     }
   } catch (e) {
     console.log('[getProjects]:', e)
+  }
+}
+
+export const getProjectByURL = async (url: string) => {
+  try {
+    const user = await currentUser()
+    if (!user) return
+    
+    const project = await client.project.findFirst({
+      where: {
+        name: parseURL(url || '').host
+      },
+    })
+
+    return project
+  } catch (e) {
+    console.log('[isProjectExists]:', e)
   }
 }
 
