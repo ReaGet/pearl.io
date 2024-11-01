@@ -25,6 +25,7 @@ export const getAuthUserDetails = async () => {
 const createUser = async (clerkId: string) => {
   return await client.user.create({
     data: {
+      id: clerkId,
       clerkId
     }
   })

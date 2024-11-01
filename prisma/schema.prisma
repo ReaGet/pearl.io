@@ -30,13 +30,18 @@ model Project {
   favicon       String?
   cacheDuration String?
 
-  userId String?
+  userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User User? @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
   Link Link[]
+}
+
+model Route {
+  id   String @id @default(uuid())
+  path String
 }
 
 model Link {

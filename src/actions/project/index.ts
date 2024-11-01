@@ -28,7 +28,7 @@ export const createProject = async (url: string) => {
     const user = await currentUser()
     if (!user) return
     
-    const { hostname, origin, pathname, href } = new URL(withHttps(url))
+    const { hostname, origin, pathname } = new URL(withHttps(url))
 
     const project = await client.project.create({
       data: {
@@ -45,6 +45,21 @@ export const createProject = async (url: string) => {
     if (project) return project
   } catch (e) {
     console.log('[createProject]:', e)
+  }
+}
+
+export const deleteProject = async (projectId: string) => {
+  try {
+    const user = await currentUser()
+    if (!user) return
+
+    const response = await client.project.delete({
+      where: { id: projectId }
+    })
+    
+    return response
+  } catch(e) {
+    console.log('[deleteProject]', e)
   }
 }
 

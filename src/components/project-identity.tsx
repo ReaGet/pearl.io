@@ -8,7 +8,7 @@ type Props = {
   imgSize?: number
 }
 
-const SiteItem = ({ img, name, imgSize = 16 }: Props) => {
+const ProjectIdentity = ({ img, name, imgSize = 16 }: Props) => {
   const [ hasImage, setHasImage ] = useState(!!img)
   
   return (
@@ -23,4 +23,4 @@ const SiteItem = ({ img, name, imgSize = 16 }: Props) => {
   )
 }
 
-export default SiteItem
+export default ProjectIdentity

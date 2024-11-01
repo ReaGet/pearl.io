@@ -20,7 +20,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ChevronDown, Slice } from 'lucide-react'
 import Link from 'next/link'
-import SiteItem from '@/components/site-item'
+import ProjectIdentity from '@/components/project-identity'
 import ButtonResetCache from '@/components/button-reset-cache'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getProjects } from '@/actions/project'
@@ -51,7 +51,7 @@ const ProjectPage = async ({ params }: Props) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='rounded-sm'>
-              <SiteItem img={currentProject.favicon ? `${currentProject.url}${currentProject.favicon}` : ''} name={currentProject.name} />
+              <ProjectIdentity img={currentProject.favicon ? `${currentProject.url}${currentProject.favicon}` : ''} name={currentProject.name} />
               <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -62,7 +62,7 @@ const ProjectPage = async ({ params }: Props) => {
               : (
                 <Link href={`${DASHBOARD}/${s.id}`} key={s.id}>
                   <DropdownMenuItem key={s.id} className='cursor-pointer'>
-                    <SiteItem img={s.favicon ? `${s.url}${s.favicon}` : ''} name={s.name} />
+                    <ProjectIdentity img={s.favicon ? `${s.url}${s.favicon}` : ''} name={s.name} />
                   </DropdownMenuItem>
                 </Link>
               )

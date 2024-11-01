@@ -17,7 +17,6 @@ const ButtonResetCache = ({ className }: { className?: string }) => {
           <Button
             variant='ghost'
             className={cn('ml-auto w-8 h-8', className)}
-            
           >
             <RotateCcw className='text-muted-foreground w-4 h-4' />
           </Button>

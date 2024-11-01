@@ -3,7 +3,7 @@ import Container from '@/components/container'
 import { ChevronsRight, LogOut, User } from 'lucide-react'
 import Link from 'next/link'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,11 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuItem
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import { DASHBOARD } from '@/lib/constants'
 import { SignOutButton } from '@clerk/nextjs'
+import { getAuthUserDetails } from '@/actions/user'
 
-const LayoutDashboard = ({ children }: { children: React.ReactNode }) => {
+const LayoutDashboard = async ({ children }: { children: React.ReactNode }) => {
+  await getAuthUserDetails()
+
   return (
     <>
       <header className='py-2'>
@@ -37,11 +40,11 @@ const LayoutDashboard = ({ children }: { children: React.ReactNode }) => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className='w-12 h-12 rounded-full border'>
+              <Button variant='ghost' className='w-12 h-12 rounded-full border'>
                 <User className='w-6 h-6'/>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className='w-56'>
               <DropdownMenuLabel className='pb-0'>Hey, User</DropdownMenuLabel>
               <div className='px-2 text-sm text-primary'>rifat2125@gmail.com</div>
               <DropdownMenuSeparator />

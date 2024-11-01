@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createProject } from '@/actions/project'
+import { createProject, deleteProject } from '@/actions/project'
 import { useRouter } from 'next/navigation'
 
 export const useProjects = () => {
@@ -16,8 +16,20 @@ export const useProjects = () => {
     })
   }
 
+  const removeProject = async (projectId: string) => {
+    if (isLoading) return
+    setIsLoading(true)
+
+    return await deleteProject(projectId).finally(() => {
+      setIsLoading(false)
+      router.refresh()
+    })
+
+  }
+
   return {
     addProject,
+    removeProject,
     isLoading
   }
 }

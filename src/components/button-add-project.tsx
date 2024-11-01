@@ -10,9 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useProjects } from '@/hooks/project/use-project'
 import { FormEvent, useState } from 'react'
 
@@ -41,7 +41,7 @@ const ButtonAddProject = () => {
           <span>Site</span>
         </Button>
       </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle>Create new project</DialogTitle>
             <DialogDescription>
@@ -49,21 +49,21 @@ const ButtonAddProject = () => {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={e => handleSubmit(e)} className='flex flex-col gap-4'>
-            <div className="flex items-center space-x-2">
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="link" className="sr-only">
+            <div className='flex items-center space-x-2'>
+              <div className='grid flex-1 gap-2'>
+                <Label htmlFor='link' className='sr-only'>
                   Link
                 </Label>
                 <Input
-                  id="link"
+                  id='link'
                   placeholder='https://site.ru'
                   value={url}
                   onChange={e => setUrl(e.target.value)}
                 />
               </div>
             </div>
-            <DialogFooter className="flex-row justify-end">
-              <Button type="submit" disabled={isLoading} className='w-32'>
+            <DialogFooter className='flex-row justify-end'>
+              <Button type='submit' disabled={isLoading} className='w-32'>
                 { isLoading ? (
                   <LoaderCircle size='16' className='animate-spin' />
                 ) : (
@@ -71,7 +71,7 @@ const ButtonAddProject = () => {
                 )}
               </Button>
               <DialogClose asChild>
-                <Button type="button" variant="ghost" asChild className='cursor-pointer'>
+                <Button type='button' variant='ghost' asChild className='cursor-pointer'>
                   <div>Close</div>
                 </Button>
               </DialogClose>
