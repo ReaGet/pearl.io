@@ -3,7 +3,18 @@ import { client } from "@/lib/prisma"
 import { getPuppeteerPage } from "@/lib/screenshot"
 import { currentUser } from "@clerk/nextjs/server"
 import { Project } from "@prisma/client"
-import { withHttps, parseURL } from 'ufo'
+import { parseURLWithProtocol } from '@/lib/url'
+import { parse } from 'node-html-parser'
+
+type ErrorType = {
+  name: string
+  code: string
+  clientVersion: string
+  meta: {
+    model: string
+    target: string[]
+  }
+}
 
 export const getProjects = async () => {
   try {
@@ -22,7 +33,8 @@ export const getProjects = async () => {
       return projects
     }
   } catch (e) {
-    console.log('[getProjects]:', e)
+    const error = e as ErrorType
+    console.log('[getProjects]:', error)
   }
 }
 
@@ -33,13 +45,14 @@ export const getProjectByURL = async (url: string) => {
     
     const project = await client.project.findFirst({
       where: {
-        name: parseURL(url || '').host
+        origin: parseURLWithProtocol(url).origin
       },
     })
 
     return project
   } catch (e) {
-    console.log('[isProjectExists]:', e)
+    const error = e as ErrorType
+    console.log('[getProjectByURL]:', error)
   }
 }
 
@@ -47,24 +60,31 @@ export const createProject = async (url: string) => {
   try {
     const user = await currentUser()
     if (!user) return
-    
-    const { hostname, origin, pathname } = new URL(withHttps(url))
 
-    const project = await client.project.create({
+    let project = await client.project.create({
       data: {
-        name: hostname,
-        url: `${origin}${pathname}`,
+        origin: parseURLWithProtocol(url).origin,
         cacheDuration: '14',
-        favicon: '',
+        faviconUrl: '',
         userId: user.id,
       }
     })
 
-    getFaviconAndUpdateInfo(project)
+    project = await getFaviconAndUpdateInfo(project) as typeof project
 
-    if (project) return project
+    if (project) return {
+      success: true,
+      data: project
+    }
   } catch (e) {
-    console.log('[createProject]:', e)
+    const error = e as ErrorType
+    if (error.code === 'P2002') {
+      return {
+        success: false,
+        data: 'Project exists in another account'
+      }
+    }
+    console.log('[createProject]:', error)
   }
 }
 
@@ -79,7 +99,8 @@ export const deleteProject = async (projectId: string) => {
     
     return response
   } catch(e) {
-    console.log('[deleteProject]', e)
+    const error = e as ErrorType
+    console.log('[deleteProject]', error)
   }
 }
 
@@ -95,17 +116,23 @@ export const updateProject = async (projectId: string, projectData: Partial<Proj
     
     return response
   } catch(e) {
-    console.log('[updateProject]', e)
+    const error = e as ErrorType
+    console.log('[updateProject]', error)
   }
 }
 
 type WebsiteBasicInfo = {
-  favicon: string
+  faviconUrl: string
 }
 
-const getFaviconAndUpdateInfo = (project: Project) => {
-  getWebsiteData(project.url).then(data => {
-    updateProject(project.id, data)
+const getFaviconAndUpdateInfo = async (project: Project)=> {
+  const html = await fetch(project.origin).then(res => res.text())
+  const document = parse(html)
+  const faviconElement = document.querySelector('link[rel*="icon"]')
+  const faviconUrl = faviconElement && faviconElement.getAttribute('href')
+  
+  return await updateProject(project.id, {
+    faviconUrl: faviconUrl || ''
   })
 }
 
@@ -115,16 +142,14 @@ const getWebsiteData = async (url: string): Promise<WebsiteBasicInfo> => {
       const faviconUrl = await page.evaluate(() => {
         const faviconElement = document.querySelector('link[rel*="icon"]')
         return faviconElement && faviconElement.getAttribute('href')
-      })
+      }) || ''
       
-      return {
-        favicon: faviconUrl
-      }
+      return { faviconUrl }
     })
   } catch(e) {
     console.log(e)
     return {
-      favicon: ''
+      faviconUrl: ''
     }
   }
 }

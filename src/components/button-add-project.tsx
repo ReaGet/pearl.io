@@ -15,20 +15,25 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useProjects } from '@/hooks/project/use-project'
 import { FormEvent, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 const ButtonAddProject = () => {
   const { isLoading, addProject } = useProjects()
   const [isOpen, setIsOpen] = useState(false)
   const [url, setUrl] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (isLoading) return
 
     addProject(url).then((data) => {
-      if (data) {
+      if (!data) return
+      if (data.success) {
         setIsOpen(false)
         setUrl('')
+      } else {
+        setError(data.data as string)
       }
     })
   }
@@ -50,16 +55,24 @@ const ButtonAddProject = () => {
           </DialogHeader>
           <form onSubmit={e => handleSubmit(e)} className='flex flex-col gap-4'>
             <div className='flex items-center space-x-2'>
-              <div className='grid flex-1 gap-2'>
-                <Label htmlFor='link' className='sr-only'>
-                  Link
-                </Label>
+              <div className='grid flex-1 gap-1'>
                 <Input
                   id='link'
                   placeholder='https://site.ru'
                   value={url}
-                  onChange={e => setUrl(e.target.value)}
+                  onChange={e => {
+                    setError('')
+                    setUrl(e.target.value)
+                  }}
+                  className={
+                    cn({
+                      'text-red-500 border-current': error
+                    })
+                  }
                 />
+                { error && (
+                  <span className='text-xs text-red-500'>{error}</span>
+                )}
               </div>
             </div>
             <DialogFooter className='flex-row justify-end'>

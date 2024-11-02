@@ -12,6 +12,7 @@ import ProjectIdentity from '@/components/project-identity'
 import type { Metadata } from 'next'
 import { getProjects } from '@/actions/project'
 import ProjectCardActions from '@/components/project-card-actions'
+import { parseURLWithProtocol } from '@/lib/url'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -36,7 +37,7 @@ const Dashboard = async () => {
             <Card className="hover:shadow-sm transition-shadow">
               <CardHeader className='px-4 pt-4 pb-3'>
                 <CardTitle className='flex items-center justify-between'>
-                  <ProjectIdentity img={p.favicon ? `${p.url}${p.favicon}` : ''} name={p.name} imgSize={20} />
+                  <ProjectIdentity img={p.faviconUrl ? `${p.origin}${p.faviconUrl}` : ''} name={parseURLWithProtocol(p.origin).host} imgSize={20} />
                   <ProjectCardActions projectId={p.id} className='-mt-2 -mr-2' />
                 </CardTitle>
               </CardHeader>

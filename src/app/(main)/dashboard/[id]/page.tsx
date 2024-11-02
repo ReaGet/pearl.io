@@ -24,11 +24,18 @@ import ProjectIdentity from '@/components/project-identity'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getProjects } from '@/actions/project'
 import ProjectCardActions from '@/components/project-card-actions'
+import { parseURLWithProtocol } from '@/lib/url'
+import { withBase } from 'ufo'
+import { Project } from '@prisma/client'
 
 type Props = {
   params: {
     id: string
   }
+}
+
+const getFaviconUrl = ({ faviconUrl, origin }: Project) => {
+  return withBase(faviconUrl || '', origin)
 }
 
 const ProjectPage = async ({ params }: Props) => {
@@ -51,18 +58,18 @@ const ProjectPage = async ({ params }: Props) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='rounded-sm'>
-              <ProjectIdentity img={currentProject.favicon ? `${currentProject.url}${currentProject.favicon}` : ''} name={currentProject.name} />
+              <ProjectIdentity img={getFaviconUrl(currentProject)} name={parseURLWithProtocol(currentProject.origin).host} />
               <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-56' align='start'>
-            {projects.map(s => (
-              s.id === currentProject?.id
+            {projects.map(p => (
+              p.id === currentProject.id
               ? null
               : (
-                <Link href={`${DASHBOARD}/${s.id}`} key={s.id}>
-                  <DropdownMenuItem key={s.id} className='cursor-pointer'>
-                    <ProjectIdentity img={s.favicon ? `${s.url}${s.favicon}` : ''} name={s.name} />
+                <Link href={`${DASHBOARD}/${p.id}`} key={p.id}>
+                  <DropdownMenuItem key={p.id} className='cursor-pointer'>
+                    <ProjectIdentity img={getFaviconUrl(p)} name={parseURLWithProtocol(p.origin).host} />
                   </DropdownMenuItem>
                 </Link>
               )
@@ -103,7 +110,7 @@ const ProjectPage = async ({ params }: Props) => {
               <div className='flex items-center gap-4 px-2 py-1 text-muted-foreground rounded-md text-left hover:bg-muted' key={i.id}>
                 <span className='max-w-[520px] line-clamp-1 text-black'>{i.link}</span>
                 <div className='h-8 w-16 ml-auto'>
-                  <img src={`/${i.name}.jpg`} className='h-full w-full object-contain' loading='lazy' />
+                  <img src={`/${i.src}`} className='h-full w-full object-contain' loading='lazy' />
                 </div>
               </div>
             ))

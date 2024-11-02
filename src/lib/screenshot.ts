@@ -1,3 +1,4 @@
+'use server'
 import puppeteer, { Page } from 'puppeteer'
 import { v4 as uuid4 } from 'uuid'
 
@@ -10,7 +11,7 @@ export const screenshotViewport = async (url: string, delay: number = 0): Promis
   try {
     await getPuppeteerPage(url, async (page) => {
       await delayFn(delay)
-      await page.screenshot({ path: `public/${imageName}.jpg`, quality: 100 })   
+      await page.screenshot({ path: `public/${process.env.NEXT_PUBLIC_SCREENSHOTS_PATH}/${imageName}.jpg`, quality: 100 })   
     })
   } catch (e) {
     console.log(e)

@@ -29,7 +29,7 @@ export const GET = async (request: NextRequest) => {
     })
   }
 
-  const imageBlob = await fetch(`http://localhost:4000/${image.name}.jpg`).then(res => res.blob())
+  const imageBlob = await fetch(`http://localhost:4000/${image.src}`).then(res => res.blob())
 
   return new Response(imageBlob, {
     status: 200,

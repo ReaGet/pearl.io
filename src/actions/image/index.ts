@@ -1,8 +1,10 @@
+'use server'
 import { client } from '@/lib/prisma'
 import { screenshotViewport } from '@/lib/screenshot'
+import { parseURLWithProtocol } from '@/lib/url'
 import { currentUser } from '@clerk/nextjs/server'
 import { Project } from '@prisma/client'
-import { parseURL, resolveURL } from 'ufo'
+import { withoutTrailingSlash, resolveURL } from 'ufo'
 
 export const getImages = async (projectId: string) => {
   try {
@@ -10,7 +12,7 @@ export const getImages = async (projectId: string) => {
     if (!user) return
     
     const images = await client.image.findFirst({
-      where: { projectId},
+      where: { projectId },
     })
 
     if (images) return images
@@ -23,10 +25,12 @@ export const getImage = async (link: string) => {
   try {
     const user = await currentUser()
     if (!user) return
+
+    const { origin, pathname } = parseURLWithProtocol(link)
     
     const image = await client.image.findFirst({
       where: {
-        link
+        link: withoutTrailingSlash(resolveURL(origin, pathname)),
       },
     })
 
@@ -36,18 +40,34 @@ export const getImage = async (link: string) => {
   }
 }
 
+export const removeImages = async (projectId: string) => {
+  try {
+    const user = await currentUser()
+    if (!user) return
+    // TODO: remove images from disk
+    await client.image.deleteMany({
+      where: {
+        projectId
+      }
+    })
+    
+  } catch (e) {
+    console.log('[removeImages]:', e)
+  }
+}
+
 export const createImage = async (project: Project, link: string, delay: number) => {
   const imageName = await screenshotViewport(link, delay)
   if (!imageName) return
 
-  const { host, pathname} = parseURL(link)
+  const { origin, pathname } = parseURLWithProtocol(link)
 
   try {
     const image = await client.image.create({
       data: {
-        name: imageName,
+        src: `${process.env.NEXT_PUBLIC_SCREENSHOTS_PATH}/${imageName}.jpg`,
         projectId: project.id,
-        link: resolveURL(host, pathname),
+        link: withoutTrailingSlash(resolveURL(origin, pathname)),
       }
     })
 

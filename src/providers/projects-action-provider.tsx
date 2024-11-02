@@ -8,10 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useProjects } from '@/hooks/project/use-project'
+import { LoaderCircle } from 'lucide-react'
 
 type ProjectsActionContext = {
   applyAction: (projectId: string, action: Actions) => void
@@ -22,7 +22,7 @@ const ProjectsActionContext = createContext<ProjectsActionContext | null>(null)
 type Actions = 'clearCache' | 'removeProject' | 'none'
 
 const ProjectsActionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { removeProject, isLoading } = useProjects()
+  const { removeProject, clearCache, isLoading } = useProjects()
   const [isOpen, setIsOpen] = useState(false)
   const [action, setAction] = useState<Actions>()
   const [projectId, setProjectId] = useState<string|null>(null)
@@ -40,8 +40,11 @@ const ProjectsActionProvider = ({ children }: { children: React.ReactNode }) => 
   }
 
   const handleAccept = async () => {
-    if (action === 'clearCache') {}
-    if (action === 'removeProject' && projectId)
+    if (!projectId) return
+
+    if (action === 'clearCache')
+      await clearCache(projectId)
+    if (action === 'removeProject')
       await removeProject(projectId)
 
     handleClose()
@@ -66,8 +69,12 @@ const ProjectsActionProvider = ({ children }: { children: React.ReactNode }) => 
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type='button' variant='default' onClick={handleAccept} disabled={isLoading}>
-                Accept
+              <Button type='button' variant='default' onClick={handleAccept} disabled={isLoading} className='w-20'>
+                { isLoading ? (
+                  <LoaderCircle size='16' className='animate-spin' />
+                ) : (
+                  'Accept'
+                )}
               </Button>
             </DialogFooter>
         </DialogContent>

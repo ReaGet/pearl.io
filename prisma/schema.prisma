@@ -25,9 +25,8 @@ model User {
 
 model Project {
   id            String @id @default(uuid())
-  name          String
-  url           String
-  favicon       String?
+  origin        String @unique
+  faviconUrl    String?
   cacheDuration String?
 
   userId String
@@ -41,7 +40,7 @@ model Project {
 
 model Image {
   id     String @id @default(uuid())
-  name   String
+  src   String
   link String
   projectId String
 
