@@ -34,7 +34,7 @@ type Props = {
   }
 }
 
-const getFaviconUrl = ({ faviconUrl, origin }: Project) => {
+export const getFaviconUrl = ({ faviconUrl, origin }: Project) => {
   return withBase(faviconUrl || '', origin)
 }
 
