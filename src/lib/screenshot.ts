@@ -1,6 +1,6 @@
 'use server'
-import chromium from '@sparticuz/chromium'
-import puppeteer, { Page } from 'puppeteer'
+import chromium from '@sparticuz/chromium-min'
+import puppeteer, { Page } from 'puppeteer-core'
 import { v4 as uuid4 } from 'uuid'
 import { imageSavingPath } from './folders'
 
