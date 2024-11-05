@@ -18,10 +18,10 @@ type ErrorType = {
 }
 
 export const getProjects = async () => {
+  const user = await currentUser()
+  if (!user) return
+  
   try {
-    const user = await currentUser()
-    if (!user) return
-    
     const projects = await client.project.findMany({
       where: {
         userId: user.id

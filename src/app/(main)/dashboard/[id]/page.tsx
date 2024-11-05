@@ -16,9 +16,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getProjects } from '@/actions/project'
 import ProjectCardActions from '@/components/project-card-actions'
 import { parseURLWithProtocol } from '@/lib/url'
-import { withBase } from 'ufo'
-import { Project } from '@prisma/client'
 import CacheDuration, { CacheDurationValues } from '@/components/cache-duration'
+import { getFaviconUrl } from '@/lib/utils'
 
 type Props = {
   params: {
@@ -26,18 +25,11 @@ type Props = {
   }
 }
 
-export const getFaviconUrl = ({ faviconUrl, origin }: Project) => {
-  return withBase(faviconUrl || '', origin)
-}
-
 const ProjectPage = async ({ params }: Props) => {
   const projects = await getProjects() || []
   const currentProject = projects.find(s => s.id === params.id)
 
   if (!currentProject) return redirect(DASHBOARD)
-
-  const handleCacheChange = (cacheValue: string) => {
-  }
     
   return (
     <Container className='flex flex-col gap-8 mt-8'>

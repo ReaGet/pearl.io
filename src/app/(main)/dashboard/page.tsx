@@ -13,15 +13,15 @@ import type { Metadata } from 'next'
 import { getProjects } from '@/actions/project'
 import ProjectCardActions from '@/components/project-card-actions'
 import { parseURLWithProtocol } from '@/lib/url'
-import { getFaviconUrl } from './[id]/page'
+import { getFaviconUrl } from '@/lib/utils'
 import { updateUser } from '@/actions/user'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Pearl',
-    openGraph: {
-      images: 'http://localhost:3000/api/get?url=https://avtoalfa.com',
-    },
+    // openGraph: {
+    //   images: 'http://localhost:4000/api/get?url=https://avtoalfa.com',
+    // },
   }
 }
 
