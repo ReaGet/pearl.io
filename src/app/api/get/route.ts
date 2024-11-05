@@ -32,7 +32,7 @@ export const GET = async (request: NextRequest) => {
   let imageBlob = null
 
   if (typeof image === 'object' && !(image instanceof Blob))
-    imageBlob = await fetch(`http://localhost:4000/${image.src}`).then(res => res.blob())
+    imageBlob = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${image.src}`).then(res => res.blob())
   else
     imageBlob = image
 
