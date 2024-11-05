@@ -29,7 +29,12 @@ export const GET = async (request: NextRequest) => {
     })
   }
 
-  const imageBlob = await fetch(`http://localhost:4000/${image.src}`).then(res => res.blob())
+  let imageBlob = null
+
+  if (typeof image === 'object' && !(image instanceof Blob))
+    imageBlob = await fetch(`http://localhost:4000/${image.src}`).then(res => res.blob())
+  else
+    imageBlob = image
 
   return new Response(imageBlob, {
     status: 200,

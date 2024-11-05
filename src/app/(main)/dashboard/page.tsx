@@ -14,6 +14,7 @@ import { getProjects } from '@/actions/project'
 import ProjectCardActions from '@/components/project-card-actions'
 import { parseURLWithProtocol } from '@/lib/url'
 import { getFaviconUrl } from './[id]/page'
+import { updateUser } from '@/actions/user'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -27,11 +28,17 @@ export async function generateMetadata(): Promise<Metadata> {
 const Dashboard = async () => {
   const projects = await getProjects() || []
 
+  const cachedImagesCount = projects.reduce((acc, p) => {
+    acc += p.Image.length
+    return acc
+  }, 0)
+
   return (
     <Container className='flex flex-col gap-8 mt-16'>
       <div className='w-full'>
         <ButtonAddProject />
       </div>
+      <div className='w-full'>You cached <b>{cachedImagesCount}</b> images</div>
       <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-8'>
         { projects.map(p => (
           <Link href={`/dashboard/${p.id}`} key={p.id}>

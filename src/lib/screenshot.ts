@@ -21,6 +21,18 @@ export const screenshotViewport = async (url: string, projectId: string, delay: 
   return imageName
 }
 
+export const screenshotViewportBlob = async (url: string, delay: number = 0): Promise<Uint8Array | null> => {
+  try {
+    return await getPuppeteerPage(url, async (page) => {
+      await delayFn(delay)
+      return await page.screenshot({ quality: 100, type: 'jpeg' })   
+    })
+  } catch (e) {
+    console.log('[screenshotViewportBlob]:', e)
+  }
+  return null
+}
+
 type GetPuppeteerPageParam = (page: Page) => Promise<any>
 
 export const getPuppeteerPage = async (url: string, callback: GetPuppeteerPageParam) => {

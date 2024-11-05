@@ -1,17 +1,28 @@
 import { useState } from 'react'
-import { createProject, deleteProject } from '@/actions/project'
+import { createProject, deleteProject, updateProjectDetails } from '@/actions/project'
 import { useRouter } from 'next/navigation'
 import { removeImages } from '@/actions/image'
+import { Project } from '@prisma/client'
 
 export const useProjects = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  const addProject = async (url: string) => {
+  const addProject = async (data: { url: string, cacheDuration: string}) => {
     if (isLoading) return
     setIsLoading(true)
 
-    return await createProject(url).finally(() => {
+    return await createProject(data).finally(() => {
+      setIsLoading(false)
+      router.refresh()
+    })
+  }
+
+  const updateProject = async (projectId: string, projectData: Partial<Project>) => {
+    if (isLoading) return
+    setIsLoading(true)
+
+    return await updateProjectDetails(projectId, projectData).finally(() => {
       setIsLoading(false)
       router.refresh()
     })
@@ -42,6 +53,7 @@ export const useProjects = () => {
     addProject,
     removeProject,
     clearCache,
+    updateProject,
     isLoading,
   }
 }

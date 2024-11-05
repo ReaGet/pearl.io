@@ -1,5 +1,6 @@
 import { client } from '@/lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'
+import { User } from '@prisma/client'
 
 export const getAuthUserDetails = async () => {
   try {
@@ -29,6 +30,26 @@ const createUser = async (clerkId: string) => {
       clerkId
     }
   })
+}
+
+export const updateUser = async (userData: Partial<User>) => {
+  try {
+    const user = await currentUser()
+    if (!user) return
+
+    const response = await client.user.update({
+      where: {
+        clerkId: user.id
+      },
+      data: {
+        ...userData
+      }
+    })
+
+    return response
+  } catch(e) {
+    console.log('[updateUser]', e)
+  }
 }
 
 export const initUser = async () => {

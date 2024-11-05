@@ -1,6 +1,6 @@
 import Container from '@/components/container'
 import React from 'react'
-import { DASHBOARD, sites } from '@/lib/constants'
+import { DASHBOARD } from '@/lib/constants'
 import { redirect } from 'next/navigation'
 import {
   DropdownMenu,
@@ -8,15 +8,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ChevronDown, Slice } from 'lucide-react'
 import Link from 'next/link'
@@ -27,6 +18,7 @@ import ProjectCardActions from '@/components/project-card-actions'
 import { parseURLWithProtocol } from '@/lib/url'
 import { withBase } from 'ufo'
 import { Project } from '@prisma/client'
+import CacheDuration, { CacheDurationValues } from '@/components/cache-duration'
 
 type Props = {
   params: {
@@ -43,6 +35,9 @@ const ProjectPage = async ({ params }: Props) => {
   const currentProject = projects.find(s => s.id === params.id)
 
   if (!currentProject) return redirect(DASHBOARD)
+
+  const handleCacheChange = (cacheValue: string) => {
+  }
     
   return (
     <Container className='flex flex-col gap-8 mt-8'>
@@ -82,24 +77,7 @@ const ProjectPage = async ({ params }: Props) => {
           Add Route
         </Button> */}
         <div className='flex items-center gap-4'>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Cache duration" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Cache duration</SelectLabel>
-                <SelectItem value="no-cache">No cache</SelectItem>
-                <SelectItem value="1">1 day</SelectItem>
-                <SelectItem value="2">2 days</SelectItem>
-                <SelectItem value="5">5 days</SelectItem>
-                <SelectItem value="10">10 days</SelectItem>
-                <SelectItem value="20">20 days</SelectItem>
-                <SelectItem value="30">30 days</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
+          <CacheDuration className='w-[180px]' projectId={currentProject.id} defaultValue={(currentProject.cacheDuration as CacheDurationValues)} />
           <ProjectCardActions projectId={currentProject.id} />
         </div>
       </div>

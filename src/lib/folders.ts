@@ -48,7 +48,7 @@ export const removeFile = async (dir: string, filename: string) => {
     }
 
     await readdir(path).then(async (files) => {
-      const file = files.find((f) => f === filename)
+      const file = files.find((f) => f.includes(filename))
       if (file) unlink(`${path}/${file}`)
     })
   } catch(e) {

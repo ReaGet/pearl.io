@@ -57,7 +57,9 @@ export const getProjectByURL = async (url: string) => {
   }
 }
 
-export const createProject = async (url: string) => {
+export const createProject = async ({
+  url, cacheDuration
+  }: { url: string, cacheDuration: string}) => {
   try {
     const user = await currentUser()
     if (!user) return
@@ -65,7 +67,7 @@ export const createProject = async (url: string) => {
     let project = await client.project.create({
       data: {
         origin: parseURLWithProtocol(url).origin,
-        cacheDuration: '14',
+        cacheDuration: cacheDuration,
         faviconUrl: '',
         userId: user.id,
       }
@@ -107,20 +109,25 @@ export const deleteProject = async (projectId: string) => {
   }
 }
 
-export const updateProject = async (projectId: string, projectData: Partial<Project>) => {
+export const updateProjectDetails = async (projectId: string, projectData: Partial<Project>) => {
   try {
     const user = await currentUser()
     if (!user) return
-
+    console.log(123, projectData)
     const response = await client.project.update({
       where: { id: projectId },
-      data: { ... projectData }
+      data: {
+        ...projectData,
+        // ...(!projectData.cacheDuration ? {} : {
+        //   cacheDurationUpdatedAt: new Date()
+        // })
+      }
     })
     
     return response
   } catch(e) {
     const error = e as ErrorType
-    console.log('[updateProject]', error)
+    console.log('[updateProjectDetails]', error)
   }
 }
 
@@ -134,7 +141,7 @@ const getFaviconAndUpdateInfo = async (project: Project)=> {
   const faviconElement = document.querySelector('link[rel*="icon"]')
   const faviconUrl = faviconElement && faviconElement.getAttribute('href')
   
-  return await updateProject(project.id, {
+  return await updateProjectDetails(project.id, {
     faviconUrl: faviconUrl || ''
   })
 }
