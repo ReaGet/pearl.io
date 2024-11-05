@@ -61,7 +61,13 @@ const ProjectsActionProvider = ({ children }: { children: React.ReactNode }) => 
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription></DialogDescription>
+            <DialogDescription>{
+              action === 'clearCache'
+              ? 'This action will remove all cached images'
+              : action === 'removeProject'
+                ? 'This action will remove project and all cached images'
+                : ''  
+            }</DialogDescription>
           </DialogHeader>
             <DialogFooter className='flex-row justify-end'>
               <DialogClose asChild>

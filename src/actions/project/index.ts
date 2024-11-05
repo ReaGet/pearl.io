@@ -5,6 +5,7 @@ import { currentUser } from "@clerk/nextjs/server"
 import { Project } from "@prisma/client"
 import { parseURLWithProtocol } from '@/lib/url'
 import { parse } from 'node-html-parser'
+import { removeImages } from "../image"
 
 type ErrorType = {
   name: string
@@ -96,6 +97,8 @@ export const deleteProject = async (projectId: string) => {
     const response = await client.project.delete({
       where: { id: projectId }
     })
+
+    await removeImages(projectId)
     
     return response
   } catch(e) {

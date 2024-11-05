@@ -1,20 +1,21 @@
 'use server'
 import puppeteer, { Page } from 'puppeteer'
 import { v4 as uuid4 } from 'uuid'
+import { imageSavingPath } from './folders'
 
 const delayFn = (ms: number) => new Promise<void>((resolve) => {
   setTimeout(() => resolve(), ms)
 })
 
-export const screenshotViewport = async (url: string, delay: number = 0): Promise<string | null> => {
+export const screenshotViewport = async (url: string, projectId: string, delay: number = 0): Promise<string | null> => {
   const imageName = uuid4()
   try {
     await getPuppeteerPage(url, async (page) => {
       await delayFn(delay)
-      await page.screenshot({ path: `public/${process.env.NEXT_PUBLIC_SCREENSHOTS_PATH}/${imageName}.jpg`, quality: 100 })   
+      await page.screenshot({ path: `public/${imageSavingPath(projectId)}/${imageName}.jpg`, quality: 100 })   
     })
   } catch (e) {
-    console.log(e)
+    console.log('[screenshotViewport]:', e)
   }
 
   return imageName
@@ -37,7 +38,7 @@ export const getPuppeteerPage = async (url: string, callback: GetPuppeteerPagePa
 
     return await callback(page)
   } catch(e) {
-    console.log(e)
+    console.log('[getPuppeteerPage]:', e)
   } finally {
     await browser.close()
   }
